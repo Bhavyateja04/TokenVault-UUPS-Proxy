@@ -1,0 +1,68 @@
+# Submission Configuration for TokenVault UUPS Proxy System
+
+version: 1.0
+
+setup:
+  - name: Install Dependencies
+    command: npm install
+  
+  - name: Compile Contracts
+    command: npx hardhat compile
+
+test:
+  - name: Run All Tests
+    command: npx hardhat test
+    
+  - name: Run V1 Tests Only
+    command: npx hardhat test test/TokenVaultV1.test.js
+    
+  - name: Run Upgrade Tests
+    command: npx hardhat test test/upgrade-v1-to-v2.test.js test/upgrade-v2-to-v3.test.js
+    
+  - name: Run Security Tests
+    command: npx hardhat test test/security.test.js
+
+verification:
+  - name: Check Contract Compilation
+    command: npx hardhat compile --network hardhat
+    
+  - name: Verify Test Coverage
+    command: npx hardhat test 2>&1 | grep -E '(passing|failing|pending)'
+
+deployment:
+  - name: Deploy V1
+    command: npx hardhat run scripts/deploy-v1.js --network hardhat
+    
+  - name: Upgrade to V2
+    command: npx hardhat run scripts/upgrade-to-v2.js --network hardhat
+    
+  - name: Upgrade to V3
+    command: npx hardhat run scripts/upgrade-to-v3.js --network hardhat
+
+required_files:
+  - contracts/TokenVaultV1.sol
+  - contracts/TokenVaultV2.sol
+  - contracts/TokenVaultV3.sol
+  - contracts/mocks/MockERC20.sol
+  - test/TokenVaultV1.test.js
+  - test/upgrade-v1-to-v2.test.js
+  - test/upgrade-v2-to-v3.test.js
+  - test/security.test.js
+  - scripts/deploy-v1.js
+  - scripts/upgrade-to-v2.js
+  - scripts/upgrade-to-v3.js
+  - hardhat.config.js
+  - package.json
+  - README.md
+
+test_requirements:
+  - minimum_passing_tests: 50
+  - minimum_coverage: 90
+  - required_test_suites:
+      - TokenVaultV1 initialization and deposits
+      - TokenVaultV1 withdrawals and fees
+      - V1 to V2 upgrade state preservation
+      - V2 yield calculations
+      - V2 to V3 upgrade state preservation
+      - V3 withdrawal delays
+      - Security and access control
